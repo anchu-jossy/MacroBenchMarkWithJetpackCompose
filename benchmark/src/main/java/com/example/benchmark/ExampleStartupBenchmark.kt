@@ -64,19 +64,44 @@ class ExampleStartupBenchmark {
         addElementsAndScrollDown()
     }
 }
-
+//
+//fun MacrobenchmarkScope.addElementsAndScrollDown() {
+//    val button = device.findObject(By.text("Click me"))
+//    val list = device.findObject(By.res("item_list"))
+//
+//    repeat(30) {
+//        button.click()
+//    }
+//
+//    device.waitForIdle()
+//
+////    list.setGestureMargin(device.displayWidth / 5)
+//  //  list.fling(Direction.DOWN)
+//
+//    device.wait(Until.findObject(By.text("Element 23")), 5000)
+//    device.wait(Until.hasObject(By.text("Detail: Element 23")), 5000)
+//}
 fun MacrobenchmarkScope.addElementsAndScrollDown() {
     val button = device.findObject(By.text("Click me"))
     val list = device.findObject(By.res("item_list"))
 
-    repeat(30) {
-        button.click()
+    if (button != null) {
+        repeat(30) {
+            button.click()
+        }
+    } else {
+        // Handle the case where the button object is null
+        // This could happen if the button is not found on the screen
+        // You may want to log a message or take appropriate action here
     }
 
     device.waitForIdle()
 
-//    list.setGestureMargin(device.displayWidth / 5)
-  //  list.fling(Direction.DOWN)
+    // Uncomment the lines below if you want to use list scrolling
+    // if (list != null) {
+    //     list.setGestureMargin(device.displayWidth / 5)
+    //     list.fling(Direction.DOWN)
+    // }
 
     device.wait(Until.findObject(By.text("Element 23")), 5000)
     device.wait(Until.hasObject(By.text("Detail: Element 23")), 5000)

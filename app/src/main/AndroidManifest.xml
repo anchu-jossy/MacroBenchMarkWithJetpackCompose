@@ -11,8 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaselineProfileMacrobenchmark"
         tools:targetApi="31">
+        <profileable
+            android:shell="true"
+           />
         <activity
-            android:name=".MainActivity"
+            android:name="com.masterproject.jetpackandmacrobenchmark.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.BaselineProfileMacrobenchmark">

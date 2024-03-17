@@ -1,4 +1,4 @@
-package com.plcoding.baselineprofilemacrobenchmark
+package com.masterproject.jetpackandmacrobenchmark
 
 import org.junit.Test
 

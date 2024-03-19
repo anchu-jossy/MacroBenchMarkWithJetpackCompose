@@ -12,9 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BaselineProfileMacrobenchmark"
         tools:targetApi="31" >
-        <activity
-            android:name=".ShopList"
-            android:exported="false" />
+
 
         <profileable android:shell="true" />
 

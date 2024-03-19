@@ -4,7 +4,8 @@ import androidx.benchmark.macro.*
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
+import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiObject2
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,35 +28,22 @@ class ExampleStartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun startUpCompilationModeNone() = startup(CompilationMode.None())
-
-    @Test
-    fun startUpCompilationModePartial() = startup(CompilationMode.Partial())
-
-
-    @Test
-    fun scrollCompilationModeNone() = scrollAndNavigate(CompilationMode.None())
-
-    @Test
-    fun scrollCompilationModePartial() = scrollAndNavigate(CompilationMode.Partial())
-
-    fun startup(mode: CompilationMode) = benchmarkRule.measureRepeated(
+    fun startup() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(StartupTimingMetric()),
         iterations = 5,
-        startupMode = StartupMode.COLD,
-        compilationMode = mode
+        startupMode = StartupMode.COLD
     ) {
         pressHome()
         startActivityAndWait()
     }
 
-    fun scrollAndNavigate(mode: CompilationMode) = benchmarkRule.measureRepeated(
+    @Test
+    fun scrollAndNavigate() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(FrameTimingMetric()),
         iterations = 5,
-        startupMode = StartupMode.COLD,
-        compilationMode = mode
+        startupMode = StartupMode.COLD
     ) {
         pressHome()
         startActivityAndWait()
@@ -63,45 +51,27 @@ class ExampleStartupBenchmark {
         addElementsAndScrollDown()
     }
 }
-//
-//fun MacrobenchmarkScope.addElementsAndScrollDown() {
-//    val button = device.findObject(By.text("Click me"))
-//    val list = device.findObject(By.res("item_list"))
-//
-//    repeat(30) {
-//        button.click()
-//    }
-//
-//    device.waitForIdle()
-//
-////    list.setGestureMargin(device.displayWidth / 5)
-//  //  list.fling(Direction.DOWN)
-//
-//    device.wait(Until.findObject(By.text("Element 23")), 5000)
-//    device.wait(Until.hasObject(By.text("Detail: Element 23")), 5000)
-//}
+
 fun MacrobenchmarkScope.addElementsAndScrollDown() {
-    val button = device.findObject(By.text("Click me"))
-    val list = device.findObject(By.res("item_list"))
+    val maxAttempts = 5
+    var attempt = 0
+    var button: UiObject2? = null
+
+    while (button == null && attempt < maxAttempts) {
+        button = device.findObject(By.text("EXPLORE FLOORS"))
+        if (button == null) {
+            Thread.sleep(500) // Wait for 500 milliseconds before next attempt
+            attempt++
+        }
+    }
 
     if (button != null) {
-        repeat(30) {
+        // Button found, proceed with the click operation
+        repeat(5) {
             button.click()
         }
     } else {
-        // Handle the case where the button object is null
-        // This could happen if the button is not found on the screen
-        // You may want to log a message or take appropriate action here
+        // Button not found after multiple attempts, handle the case appropriately
+        println("Button not found after $maxAttempts attempts.")
     }
-
-    device.waitForIdle()
-
-    // Uncomment the lines below if you want to use list scrolling
-    // if (list != null) {
-    //     list.setGestureMargin(device.displayWidth / 5)
-    //     list.fling(Direction.DOWN)
-    // }
-
-    device.wait(Until.findObject(By.text("Floor 23")), 5000)
-    device.wait(Until.hasObject(By.text("Detail: Element 23")), 5000)
 }

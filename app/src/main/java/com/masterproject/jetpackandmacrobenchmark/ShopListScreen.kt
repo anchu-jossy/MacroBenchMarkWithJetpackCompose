@@ -6,39 +6,79 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-
+@OptIn(ExperimentalComposeUiApi::class)
 
 // Shop.kt
 data class Shop(
     val id: Int,
     val name: String,
     val address: String,
-    val rating: Float,val image:String
-
+    val rating: Float,
+    val image: String
 )
 
 @Composable
 fun ShopList(shops: List<Shop>) {
-    LazyColumn {
-        items(shops) { shop ->
-            ShopItem(shop = shop)
+    var searchText by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            placeholder = { Text(text = "Search") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon"
+                )
+            },singleLine = true, // Ensure it remains single line
+            maxLines = 1, // Limit to one line
+            textStyle = TextStyle.Default.copy(fontSize = 16.sp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val filteredShops = search(shops, searchText)
+        LazyColumn (  modifier = Modifier
+
+            .testTag("shop_list")){
+            items(filteredShops) { shop ->
+                ShopItem(shop = shop)
+
+            }
         }
     }
 }
 
+fun search(shops: List<Shop>, query: String): List<Shop> {
+    return shops.filter {
+        it.name.contains(query, ignoreCase = true) ||
+                it.address.contains(query, ignoreCase = true)
+    }
+}
 
 @Composable
 fun ShopItem(shop: Shop) {
@@ -117,10 +157,8 @@ fun StarRating(shop: Shop) {
 @Composable
 fun StarIcon(imageVector: Painter) {
     Image(
-        painter =imageVector,
+        painter = imageVector,
         contentDescription = null,
-
         modifier = Modifier.size(16.dp)
-
     )
 }

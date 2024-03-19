@@ -4,7 +4,6 @@ import androidx.benchmark.macro.*
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
@@ -103,6 +102,6 @@ fun MacrobenchmarkScope.addElementsAndScrollDown() {
     //     list.fling(Direction.DOWN)
     // }
 
-    device.wait(Until.findObject(By.text("Element 23")), 5000)
+    device.wait(Until.findObject(By.text("Floor 23")), 5000)
     device.wait(Until.hasObject(By.text("Detail: Element 23")), 5000)
 }

@@ -63,7 +63,6 @@ fun ShopList(shops: List<Shop>) {
 
         val filteredShops = search(shops, searchText)
         LazyColumn (  modifier = Modifier
-
             .testTag("shop_list")){
             items(filteredShops) { shop ->
                 ShopItem(shop = shop)

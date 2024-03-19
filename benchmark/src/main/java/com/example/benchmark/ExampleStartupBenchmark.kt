@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,15 +29,36 @@ class ExampleStartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun startup() = benchmarkRule.measureRepeated(
+    fun startupCold() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 5,
+        iterations = 2,
         startupMode = StartupMode.COLD
     ) {
         pressHome()
         startActivityAndWait()
     }
+    @Test
+    fun startupWarm() = benchmarkRule.measureRepeated(
+        packageName = "com.masterproject.jetpackandmacrobenchmark",
+        metrics = listOf(StartupTimingMetric()),
+        iterations = 2,
+        startupMode = StartupMode.WARM
+    ) {
+        pressHome()
+        startActivityAndWait()
+    }
+    @Test
+    fun startupHot() = benchmarkRule.measureRepeated(
+        packageName = "com.masterproject.jetpackandmacrobenchmark",
+        metrics = listOf(StartupTimingMetric()),
+        iterations = 2,
+        startupMode = StartupMode.HOT
+    ) {
+        pressHome()
+        startActivityAndWait()
+    }
+
 
     @Test
     fun scrollAndNavigate() = benchmarkRule.measureRepeated(
@@ -49,7 +71,20 @@ class ExampleStartupBenchmark {
         startActivityAndWait()
 
         addElementsAndScrollDown()
+        device.findObject(By.text("Floor 3")).click()
+        device.wait(Until.hasObject(By.text("Floor 3")), 8000)
+
+// Scroll the RecyclerView until finding the "Dominos" shop
+     var recyclerView=   device.findObject(By.text("shop_list"))
+        while (true) {
+         //   recyclerView.fling(Direction.DOWN)
+            if ( device.hasObject(By.text("Dominos"))) {
+                break
+            }
+        }
+
     }
+
 }
 
 fun MacrobenchmarkScope.addElementsAndScrollDown() {
@@ -73,5 +108,8 @@ fun MacrobenchmarkScope.addElementsAndScrollDown() {
     } else {
         // Button not found after multiple attempts, handle the case appropriately
         println("Button not found after $maxAttempts attempts.")
+
     }
+
+
 }

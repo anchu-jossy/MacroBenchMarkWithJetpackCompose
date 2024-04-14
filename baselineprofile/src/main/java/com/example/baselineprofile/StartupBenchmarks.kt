@@ -1,30 +1,45 @@
-package com.example.benchmark
+package com.example.baselineprofile
 
-import androidx.benchmark.macro.*
+import androidx.benchmark.macro.CompilationMode
+import androidx.benchmark.macro.FrameTimingMetric
+import androidx.benchmark.macro.MacrobenchmarkScope
+import androidx.benchmark.macro.StartupMode
+import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * This is an example startup benchmark.
+ * This test class benchmarks the speed of app startup.
+ * Run this benchmark to verify how effective a Baseline Profile is.
+ * It does this by comparing [CompilationMode.None], which represents the app with no Baseline
+ * Profiles optimizations, and [CompilationMode.Partial], which uses Baseline Profiles.
  *
- * It navigates to the device's home screen, and launches the default activity.
+ * Run this benchmark to see startup measurements and captured system traces for verifying
+ * the effectiveness of your Baseline Profiles. You can run it directly from Android
+ * Studio as an instrumentation test, or run all benchmarks for a variant, for example benchmarkRelease,
+ * with this Gradle task:
+ * ```
+ * ./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest
+ * ```
  *
- * Before running this benchmark:
- * 1) switch your app's active build variant in the Studio (affects Studio runs only)
- * 2) add `<profileable android:shell="true" />` to your app's manifest, within the `<application>` tag
+ * You should run the benchmarks on a physical device, not an Android emulator, because the
+ * emulator doesn't represent real world performance and shares system resources with its host.
  *
- * Run this benchmark from Studio to see startup measurements, and captured system traces
- * for investigating your app's performance.
- */
+ * For more information, see the [Macrobenchmark documentation](https://d.android.com/macrobenchmark#create-macrobenchmark)
+ * and the [instrumentation arguments documentation](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args).
+ **/
 @RunWith(AndroidJUnit4::class)
-class ExampleStartupBenchmark {
+@LargeTest
+class StartupBenchmarks {
+
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -32,7 +47,7 @@ class ExampleStartupBenchmark {
     fun startupCold() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 2,
+        iterations = 5,
         startupMode = StartupMode.COLD
     ) {
         pressHome()
@@ -42,7 +57,7 @@ class ExampleStartupBenchmark {
     fun startupWarm() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 2,
+        iterations = 5,
         startupMode = StartupMode.WARM
     ) {
         pressHome()
@@ -52,7 +67,7 @@ class ExampleStartupBenchmark {
     fun startupHot() = benchmarkRule.measureRepeated(
         packageName = "com.masterproject.jetpackandmacrobenchmark",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 2,
+        iterations = 5,
         startupMode = StartupMode.HOT
     ) {
         pressHome()
@@ -71,8 +86,7 @@ class ExampleStartupBenchmark {
         startActivityAndWait()
 
         addElementsAndScrollDown()
-        device.wait(Until.hasObject(By.text("Floor 15")), 8000)
-        device.findObject(By.text("Floor 15")).click()
+
 
     }
 
